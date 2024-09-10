@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Powder Clicker Game</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        #game {
+            width: 80%;
+            max-width: 400px;
+            height: 400px;
+            background-color: #4CAF50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            color: white;
+            border-radius: 10px;
+            user-select: none;
+            position: relative;
+        }
+        #powder {
+            width: 100px;
+            height: 100px;
+            background: url('powder.png') no-repeat center center;
+            background-size: contain;
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        #boosts {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+        }
+        .boost {
+            background-color: #ff9800;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="game">
+        <div id="powder"></div>
+    </div>
+    <div id="boosts">
+        <div class="boost" onclick="buyBoost('double')">Double Points (10)</div>
+        <div class="boost" onclick="buyBoost('auto')">Auto Click (20)</div>
+    </div>
+    <audio id="clickSound" src="click.mp3" preload="auto"></audio>
+    <script>
+        let clicks = 0;
+        let points = 0;
+        let clickLimit = 10;
+        let doublePoints = false;
+        let autoClick = false;
+
+        const powder = document.getElementById('powder');
+        const game = document.getElementById('game');
+        const clickSound = document.getElementById('clickSound');
+
+        powder.addEventListener('click', () => {
+            if (clicks < clickLimit) {
+                clicks++;
+                points += doublePoints ? 2 : 1;
+                game.innerText = `Points: ${points}`;
+                clickSound.play();
+            }
+        });
+
+        function buyBoost(boost) {
+            if (boost === 'double' && points >= 10) {
+                points -= 10;
+                doublePoints = true;
+            } else if (boost === 'auto' && points >= 20) {
+                points -= 20;
+                autoClick = true;
+                setInterval(() => {
+                    if (clicks < clickLimit) {
+                        clicks++;
+                        points += doublePoints ? 2 : 1;
+                        game.innerText = `Points: ${points}`;
+                        clickSound.play();
+                    }
+                }, 1000);
+            }
+            game.innerText = `Points: ${points}`;
+        }
+    </script>
+</body>
+</html>
